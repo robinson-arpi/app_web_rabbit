@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.0/socket.io.js"></script>
+    <script>
+        var socket = io();
+        socket.on('connect', function() {
+            console.log('Connected to the server');
+        });
+
+        socket.on('message', function(message) {
+            alert('Received message:', message);
+            // Aquí puedes mostrar el mensaje en la interfaz de usuario
+        });
+
+        function sendMessage() {
+            var messageInput = document.getElementById('message');
+            var message = messageInput.value;
+            messageInput.value = '';
+
+            socket.emit('message', message);
+        }
+    </script>
+</head>
+<body>
+    <h1>Chat</h1>
+    <p>Emisor: {{ emisor }}</p>
+    <p>Receptor: {{ receptor }}</p>
+
+    <div id="message-container">
+        <!-- Aquí puedes mostrar los mensajes recibidos -->
+    </div>
+
+    <input type="text" id="message" required>
+    <button onclick="sendMessage()">Enviar</button>
+</body>
+</html>
