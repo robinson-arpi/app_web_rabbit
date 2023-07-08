@@ -18,7 +18,7 @@ RABBITMQ_USERNAME = 'guest'
 RABBITMQ_PASSWORD = 'guest'
 
 
-def consume_messages(queue_name):
+def consume_messages(queue_name, sender_id):
     connection = pika.BlockingConnection(
         pika.ConnectionParameters(host=RABBITMQ_HOST, port=RABBITMQ_PORT, credentials=pika.PlainCredentials(RABBITMQ_USERNAME, RABBITMQ_PASSWORD))
     )
@@ -27,8 +27,14 @@ def consume_messages(queue_name):
 
     def callback(ch, method, properties, body):
         # Emitir el mensaje recibido al cliente a través de WebSocket
-        socketio.emit('message', body.decode())
-
+        if sender_id == 'robin':
+            socketio.emit('message_r', {'message': body.decode()})
+        elif sender_id == 'mauro':
+            socketio.emit('message_m', {'message': body.decode()})
+        elif sender_id == 'pedro':
+            socketio.emit('message_p', {'message': body.decode()})
+        elif sender_id == 'juan':
+            socketio.emit('message_j', {'message': body.decode()})    
         # Imprimir el mensaje consumido en la consola
         print(f'Message consumed-> {queue_name}: {body.decode()}')
 
@@ -73,7 +79,7 @@ def handle_connect():
     if recipient_id and sender_id:
         queue_name = f'{recipient_id}_{sender_id}'
 
-        t = threading.Thread(target=consume_messages, args=(queue_name,))
+        t = threading.Thread(target=consume_messages, args=(queue_name,sender_id, ))
         t.start()
 
 
@@ -89,7 +95,7 @@ def handle_message(message):
         publish_message(queue_name, message)
 
         # Emitir el mensaje recibido al cliente a través de WebSocket
-        socketio.emit('message', message, room=f'{recipient_id}_{sender_id}')
+        #socketio.emit('message', message, room=f'{recipient_id}_{sender_id}')
 
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port=5000)

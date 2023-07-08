@@ -5,9 +5,46 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.0/socket.io.js"></script>
     <script>
         var socket = io();
+        
+        
         socket.on('connect', function() {
             console.log('Connected to the server');
         });
+
+        var emisor = '{{ emisor }}';
+        if (emisor === 'robin'){
+            socket.on('message_r', function(data) {
+                var message = data.message;        
+                alert('Received message robin:' + message);
+            // Aquí puedes mostrar el mensaje en la interfaz de usuario
+            });
+        }
+        else if (emisor === 'mauro'){
+            socket.on('message_m', function(data) {
+                var message = data.message;        
+                alert('Received message mauro:' + message);
+            // Aquí puedes mostrar el mensaje en la interfaz de usuario
+            });
+        }
+        else if (emisor === 'pedro'){
+            socket.on('message_p', function(data) {
+                var message = data.message;        
+                alert('Received message pedro:' + message);
+            // Aquí puedes mostrar el mensaje en la interfaz de usuario
+            });
+        }
+        else if (emisor === 'juan'){
+            socket.on('message_j', function(data) {
+                var message = data.message;        
+                alert('Received message juan:' + message);
+            // Aquí puedes mostrar el mensaje en la interfaz de usuario
+            });
+        }
+        
+
+        
+
+        
 
         socket.on('message', function(message) {
             alert('Received message:', message);
