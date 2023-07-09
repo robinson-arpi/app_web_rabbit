@@ -3,47 +3,46 @@
 <head>
     <title>Chat</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.0/socket.io.js"></script>
+</head>
+<body>
+    <h1>Chat</h1>
+    <p>ID chat: <span id="receptor"></span></p>
+
+    <div id="message-container">
+        <!-- Aquí se mostrarán los mensajes -->
+    </div>
+
+    <input type="text" id="message" required>
+    <button onclick="sendMessage()">Enviar</button>
+
     <script>
         var socket = io();
-        
-        
+
         socket.on('connect', function() {
             console.log('Connected to the server');
+            
+            var receptor = '{{ receptor }}';
+
+            document.getElementById('receptor').textContent = receptor;
+            var chatId = receptor;
+
+            // Unirse al chat utilizando el ID de chat
+            socket.emit('join_chat', { chat_id: chatId });
         });
 
-        var emisor = '{{ emisor }}';
-        if (emisor === 'robin'){
-            socket.on('message_r', function(data) {
-                var message = data.message;        
-                alert('Received message robin:' + message);
-            // Aquí puedes mostrar el mensaje en la interfaz de usuario
-            });
-        }
-        else if (emisor === 'mauro'){
-            socket.on('message_m', function(data) {
-                var message = data.message;        
-                alert('Received message mauro:' + message);
-            // Aquí puedes mostrar el mensaje en la interfaz de usuario
-            });
-        }
-        else if (emisor === 'cristian'){
-            socket.on('message_c', function(data) {
-                var message = data.message;        
-                alert('Received message cristian:' + message);
-            // Aquí puedes mostrar el mensaje en la interfaz de usuario
-            });
-        }
-        else if (emisor === 'vero'){
-            socket.on('message_v', function(data) {
-                var message = data.message;        
-                alert('Received message vero:' + message);
-            // Aquí puedes mostrar el mensaje en la interfaz de usuario
-            });
-        }
-        
-        socket.on('message', function(message) {
-            alert('Received message:', message);
-            // Aquí puedes mostrar el mensaje en la interfaz de usuario
+        socket.on('disconnect', function() {
+            console.log('Disconnected from the server');
+            // Puedes agregar aquí el código para manejar la desconexión
+        });
+
+        socket.on('message', function(data) {
+            var message = data.message;
+            var queueName = data.queue_name;
+
+            var messageContainer = document.getElementById('message-container');
+            var messageElement = document.createElement('p');
+            messageElement.textContent = '[' + queueName + '] ' + message;
+            messageContainer.appendChild(messageElement);
         });
 
         function sendMessage() {
@@ -51,20 +50,15 @@
             var message = messageInput.value;
             messageInput.value = '';
 
-            socket.emit('message', message);
+            var recipientId = '{{ recipient_id }}';
+            var chatId = recipientId;
+
+            // Enviar el mensaje al servidor
+            socket.emit('message', { chat_id: chatId, message: message });
         }
+
+        // Configurar el emisor y receptor en la interfaz
+        document.getElementById('receptor').textContent = '{{ recipient_id }}';
     </script>
-</head>
-<body>
-    <h1>Chat</h1>
-    <p>Emisor: {{ emisor }}</p>
-    <p>Receptor: {{ receptor }}</p>
-
-    <div id="message-container">
-        <!-- Aquí puedes mostrar los mensajes recibidos -->
-    </div>
-
-    <input type="text" id="message" required>
-    <button onclick="sendMessage()">Enviar</button>
 </body>
 </html>
