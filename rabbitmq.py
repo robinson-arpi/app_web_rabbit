@@ -1,11 +1,12 @@
 import pika
-parameters = pika.ConnectionParameters('localhost')
+# Especifica las credenciales de autenticación
+credentials = pika.PlainCredentials('guest', 'guest')
+parameters = pika.ConnectionParameters('192.168.56.1', credentials = credentials)
 connection = pika.BlockingConnection(parameters)
 channel = connection.channel()
 
 def connect():
     global connection, channel
-    parameters = pika.ConnectionParameters('localhost')
     while True:
         try:
             connection = pika.BlockingConnection(parameters)
