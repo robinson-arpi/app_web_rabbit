@@ -17,7 +17,8 @@ def login():
 @app.route('/chat', methods=['POST'])
 def chat():
     session['recipient_id'] = request.form['recipient_id']
-    return render_template('chat.html', receptor=session['recipient_id'])
+    session['sender_id'] = request.form['sender_id']
+    return render_template('chat.html', receptor=session['recipient_id'], nick = session['sender_id'])
 
 @socketio.on('connect')
 def handle_connect():
